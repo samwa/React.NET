@@ -10,6 +10,7 @@
 // For clarity, this sample has all code in the one file. In a real project, you'd put every
 // class in a separate file.
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
@@ -26,7 +27,7 @@ namespace React.Sample.Mvc4.Models
 	}
 	public class CommentModel
 	{
-		public AuthorModel Author { get; set; }
+		public string Author { get; set; }
 		public string Text { get; set; }
 	}
 }
@@ -47,14 +48,25 @@ namespace React.Sample.Mvc4.Controllers
 	{
 		private const int COMMENTS_PER_PAGE = 3;
 
-		private readonly IDictionary<string, AuthorModel> _authors;
-		private readonly IList<CommentModel> _comments;
+	    private IDictionary<string, AuthorModel> Authors
+	    {
+	        get { return (IDictionary<string, AuthorModel>) Session["authors"]; }
+	        set
+	        {
+                Session["authors"] = value;
+	        }
+	    }
+        private IList<CommentModel> Comments
+        {
+            get { return (IList<CommentModel>)Session["comments"]; }
+            set { Session["comments"] = value; }
+        }
 
-		public HomeController()
-		{
+	    private void SeedData()
+	    {
 			// In reality, you would use a repository or something for fetching data
 			// For clarity, we'll just use a hard-coded list.
-			_authors = new Dictionary<string, AuthorModel>
+			Authors = new Dictionary<string, AuthorModel>
 			{
 				{"daniel", new AuthorModel { Name = "Daniel Lo Nigro", GithubUsername = "Daniel15" }},
 				{"vjeux", new AuthorModel { Name = "Christopher Chedeau", GithubUsername = "vjeux" }},
@@ -62,34 +74,41 @@ namespace React.Sample.Mvc4.Controllers
 				{"jordwalke", new AuthorModel { Name = "Jordan Walke", GithubUsername = "jordwalke" }},
 				{"zpao", new AuthorModel { Name = "Paul O'Shannessy", GithubUsername = "zpao" }},
 			};
-			_comments = new List<CommentModel>
+			Comments = new List<CommentModel>
 			{
-				new CommentModel { Author = _authors["daniel"], Text = "First!!!!111!" },
-				new CommentModel { Author = _authors["zpao"], Text = "React is awesome!" },
-				new CommentModel { Author = _authors["cpojer"], Text = "Awesome!" },
-				new CommentModel { Author = _authors["vjeux"], Text = "Hello World" },
-				new CommentModel { Author = _authors["daniel"], Text = "Foo" },
-				new CommentModel { Author = _authors["daniel"], Text = "Bar" },
-				new CommentModel { Author = _authors["daniel"], Text = "FooBarBaz" },
+				new CommentModel { Author = "daniel", Text = "First!!!!111!" },
+				new CommentModel { Author = "zpao", Text = "React is awesome!" },
+				new CommentModel { Author = "cpojer", Text = "Awesome!" },
+				new CommentModel { Author = "vjeux", Text = "Hello World" },
+				new CommentModel { Author = "daniel", Text = "Foo" },
+				new CommentModel { Author = "daniel", Text = "Bar" },
+				new CommentModel { Author = "daniel", Text = "FooBarBaz" },
 			};
+	        
+	    }
+
+		public HomeController()
+		{
 		}
 
 		public ActionResult Index()
 		{
+            SeedData();
 			return View(new IndexViewModel
 			{
-				Comments = _comments.Take(COMMENTS_PER_PAGE),
+                Comments = Comments.Reverse().Take(COMMENTS_PER_PAGE),
 				CommentsPerPage = COMMENTS_PER_PAGE,
 				Page = 1
 			});
 		}
 
 		[OutputCache(Duration = 0, Location = OutputCacheLocation.Any, VaryByHeader = "Content-Type")]
-		public ActionResult Comments(int page)
+		public ActionResult ShowComments(int page)
 		{
 			Response.Cache.SetOmitVaryStar(true);
-			var comments = _comments.Skip((page - 1) * COMMENTS_PER_PAGE).Take(COMMENTS_PER_PAGE);
-			var hasMore = page * COMMENTS_PER_PAGE < _comments.Count;
+            //var comments = _comments.Skip((page - 1) * COMMENTS_PER_PAGE).Take(COMMENTS_PER_PAGE);
+            var comments = Comments.Reverse().Take(COMMENTS_PER_PAGE * page);
+            var hasMore = page * COMMENTS_PER_PAGE < Comments.Count;
 
 			if (ControllerContext.HttpContext.Request.ContentType == "application/json")
 			{
@@ -103,11 +122,18 @@ namespace React.Sample.Mvc4.Controllers
 			{
 				return View("Index", new IndexViewModel
 				{
-					Comments = _comments.Take(COMMENTS_PER_PAGE * page), 
+                    Comments = Comments.Reverse().Take(COMMENTS_PER_PAGE * page), 
 					CommentsPerPage = COMMENTS_PER_PAGE,
 					Page = page
 				});
 			}
 		}
+
+        [HttpPost]
+        public ActionResult AddComment(CommentModel comment)
+        {
+            Comments.Add(comment);
+            return Content("Success :)");
+        }
 	}
 }

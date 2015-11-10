@@ -22,8 +22,15 @@ namespace React.Sample.Mvc4
 			routes.MapRoute(
 				name: "Comments",
 				url: "comments/page-{page}",
-				defaults: new { controller = "Home", action = "Comments", page = 1 }
+				defaults: new { controller = "Home", action = "ShowComments", page = 1 }
 			);
+
+		    routes.MapRoute(
+		        name: "NewComment",
+		        url: "comments/new",
+                defaults: new { controller = "Home", action = "AddComment"}
+		    );
+
 
 			routes.MapRoute(
 				name: "Default",

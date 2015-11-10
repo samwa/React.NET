@@ -7,6 +7,30 @@
  *  of patent rights can be found in the PATENTS file in the same directory.
  */
 
+var CommentForm = React.createClass({
+  handleSubmit: function(e) {
+    e.preventDefault();
+    var author = this.refs.author.getDOMNode().value.trim();
+    var text = this.refs.text.getDOMNode().value.trim();
+    if (!text || !author) {
+      return;
+    }
+    this.props.onCommentSubmit({Author: author, Text: text});
+    this.refs.author.getDOMNode().value = '';
+    this.refs.text.getDOMNode().value = '';
+    return;
+  },
+  render() {
+    return (
+      <form className="commentForm" onSubmit={this.handleSubmit}>
+        <input type="text" placeholder="Your name" ref="author" />
+        <input type="text" placeholder="Say something..." ref="text" />
+        <input type="submit" value="Post" />
+      </form>
+    );
+  }
+});
+
 var CommentsBox = React.createClass({
 	propTypes: {
 		initialComments: React.PropTypes.array.isRequired,
@@ -27,20 +51,38 @@ var CommentsBox = React.createClass({
 			loadingMore: true
 		});
 
-		var url = evt.target.href;
+		var url = evt.target.href;			
+		
+		this.loadCommentsFromServer(nextPage);
+		
+		return false;
+	},
+	  loadCommentsFromServer(page) {
+		
 		var xhr = new XMLHttpRequest();
-		xhr.open('GET', url, true);
+		xhr.open('GET', this.props.url + '/page-'+page, true);
 		xhr.setRequestHeader('Content-Type', 'application/json');
-		xhr.onload = () => {
+		xhr.onload = function() {
 			var data = JSON.parse(xhr.responseText);
 			this.setState({
-				comments: this.state.comments.concat(data.comments),
+				comments: data.comments,
 				hasMore: data.hasMore,
 				loadingMore: false
 			});
-		};
+		}.bind(this);
 		xhr.send();
-		return false;
+	  },
+	handleCommentSubmit: function(comment) {
+      var data = new FormData();
+      data.append('Author', comment.Author);
+      data.append('Text', comment.Text);
+
+      var xhr = new XMLHttpRequest();
+      xhr.open('post', this.props.submitUrl, true);
+	  xhr.onload = function() {
+		this.loadCommentsFromServer(this.state.page);
+	  }.bind(this);      
+      xhr.send(data);
 	},
 	render() {
 		var commentNodes = this.state.comments.map(comment =>
@@ -54,7 +96,8 @@ var CommentsBox = React.createClass({
 					{commentNodes}
 				</ol>
 				{this.renderMoreLink()}
-			</div>
+				<CommentForm onCommentSubmit={this.handleCommentSubmit} />
+			</div>			
 		);
 	},
 	renderMoreLink() {
@@ -79,30 +122,9 @@ var Comment = React.createClass({
 	render() {
 		return (
 			<li>
-				<Avatar author={this.props.author} />
-				<strong>{this.props.author.Name}</strong>{': '}
+				<strong>{this.props.author}</strong>{': '}
 				{this.props.children}
 			</li>
 		);
-	}
-});
-
-var Avatar = React.createClass({
-	propTypes: {
-		author: React.PropTypes.object.isRequired	
-	},
-	render() {
-		return (
-			<img
-				src={this.getPhotoUrl(this.props.author)}
-				alt={'Photo of ' + this.props.author.Name}
-				width={50}
-				height={50}
-				className="commentPhoto"
-			/>
-		);
-	},
-	getPhotoUrl(author) {
-		return 'https://avatars.githubusercontent.com/' + author.GithubUsername + '?s=50';
 	}
 });
