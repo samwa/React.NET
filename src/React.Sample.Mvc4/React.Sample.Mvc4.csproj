@@ -141,7 +141,6 @@
     </Compile>
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\ReactConfig.cs" />
-    <Compile Include="Controllers\CommentController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -209,16 +208,13 @@
     <Content Include="TransformJsx.proj" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Views\EditorTemplates\CommentModel.cshtml" />
+    <Content Include="Views\Shared\EditorTemplates\CommentModel.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Views\EditorTemplates\AuthorModel.cshtml" />
+    <Content Include="Views\Shared\EditorTemplates\AuthorModel.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Views\Comment\Index.cshtml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Views\Comment\Details.cshtml" />
+    <Content Include="Views\Shared\_EditComments.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

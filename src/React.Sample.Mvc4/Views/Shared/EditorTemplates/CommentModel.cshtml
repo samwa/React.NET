@@ -1,0 +1,13 @@
+﻿@model React.Sample.Mvc4.Models.CommentModel
+
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model.Text)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model.Text)
+            @Html.ValidationMessageFor(model => model.Text)
+        </div>
+        
+        @Html.EditorFor(model => model.Author)
+    

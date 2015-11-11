@@ -12,6 +12,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web.Mvc;
 using System.Web.UI;
@@ -27,7 +28,7 @@ namespace React.Sample.Mvc4.Models
 	}
 	public class CommentModel
 	{
-		public string Author { get; set; }
+		public AuthorModel Author { get; set; }
 		public string Text { get; set; }
 	}
 }
@@ -74,15 +75,17 @@ namespace React.Sample.Mvc4.Controllers
 				{"jordwalke", new AuthorModel { Name = "Jordan Walke", GithubUsername = "jordwalke" }},
 				{"zpao", new AuthorModel { Name = "Paul O'Shannessy", GithubUsername = "zpao" }},
 			};
+            if (Comments != null && Comments.Count > 0) return;
+
 			Comments = new List<CommentModel>
 			{
-				new CommentModel { Author = "daniel", Text = "First!!!!111!" },
-				new CommentModel { Author = "zpao", Text = "React is awesome!" },
-				new CommentModel { Author = "cpojer", Text = "Awesome!" },
-				new CommentModel { Author = "vjeux", Text = "Hello World" },
-				new CommentModel { Author = "daniel", Text = "Foo" },
-				new CommentModel { Author = "daniel", Text = "Bar" },
-				new CommentModel { Author = "daniel", Text = "FooBarBaz" },
+				new CommentModel { Author = Authors["daniel"], Text = "First!!!!111!" },
+				new CommentModel { Author = Authors["zpao"], Text = "React is awesome!" },
+				new CommentModel { Author = Authors["cpojer"], Text = "Awesome!" },
+				new CommentModel { Author = Authors["vjeux"], Text = "Hello World" },
+				new CommentModel { Author = Authors["daniel"], Text = "Foo" },
+				new CommentModel { Author = Authors["daniel"], Text = "Bar" },
+				new CommentModel { Author = Authors["daniel"], Text = "FooBarBaz" },
 			};
 	        
 	    }
@@ -132,8 +135,16 @@ namespace React.Sample.Mvc4.Controllers
         [HttpPost]
         public ActionResult AddComment(CommentModel comment)
         {
+            
             Comments.Add(comment);
-            return Content("Success :)");
+            if (ControllerContext.HttpContext.Request.ContentType == "application/json")
+            {
+                return Content("Success :)");
+            }
+            else
+            {
+                return RedirectToAction("Index");
+            }
         }
 	}
 }

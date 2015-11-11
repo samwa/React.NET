@@ -7,30 +7,6 @@
  *  of patent rights can be found in the PATENTS file in the same directory.
  */
 
-var CommentForm = React.createClass({
-  handleSubmit: function(e) {
-    e.preventDefault();
-    var author = this.refs.author.getDOMNode().value.trim();
-    var text = this.refs.text.getDOMNode().value.trim();
-    if (!text || !author) {
-      return;
-    }
-    this.props.onCommentSubmit({Author: author, Text: text});
-    this.refs.author.getDOMNode().value = '';
-    this.refs.text.getDOMNode().value = '';
-    return;
-  },
-  render() {
-    return (
-      <form className="commentForm" onSubmit={this.handleSubmit}>
-        <input type="text" placeholder="Your name" ref="author" />
-        <input type="text" placeholder="Say something..." ref="text" />
-        <input type="submit" value="Post" />
-      </form>
-    );
-  }
-});
-
 var CommentsBox = React.createClass({
 	propTypes: {
 		initialComments: React.PropTypes.array.isRequired,
@@ -74,7 +50,8 @@ var CommentsBox = React.createClass({
 	  },
 	handleCommentSubmit: function(comment) {
       var data = new FormData();
-      data.append('Author', comment.Author);
+      data.append('Author.Name', comment.Author.Name);
+      data.append('Author.GithubUsername', comment.Author.GithubUsername);
       data.append('Text', comment.Text);
 
       var xhr = new XMLHttpRequest();
@@ -96,7 +73,7 @@ var CommentsBox = React.createClass({
 					{commentNodes}
 				</ol>
 				{this.renderMoreLink()}
-				<CommentForm onCommentSubmit={this.handleCommentSubmit} />
+				<CommentForm action="/comments/new" onCommentSubmit={this.handleCommentSubmit} />
 			</div>			
 		);
 	},
@@ -127,4 +104,33 @@ var Comment = React.createClass({
 			</li>
 		);
 	}
+});
+
+var CommentForm = React.createClass({
+  handleSubmit: function(e) {
+    e.preventDefault();
+    var authorName = this.refs.authorname.getDOMNode().value.trim();
+    var authorGithubusername = this.refs.authorgithubusername.getDOMNode().value.trim();
+	var author = { Name: authorName, GithubUsername: authorGithubusername };
+    var text = this.refs.text.getDOMNode().value.trim();
+
+    if (!text || !author) {
+      return;
+    }
+    this.props.onCommentSubmit({Author: author, Text: text});
+    this.refs.authorname.getDOMNode().value = '';
+    this.refs.authorgithubusername.getDOMNode().value = '';
+    this.refs.text.getDOMNode().value = '';
+    return;
+  },
+  render() {
+    return (
+      <form className="commentForm" method="post" action={this.props.action} onSubmit={this.handleSubmit}>
+        <input name="Author.Name" type="text" placeholder="Your name" ref="authorname" />
+        <input name="Author.GithubUsername" type="text" placeholder="Your github username" ref="authorgithubusername" />
+        <input name="Text" type="text" placeholder="Say something..." ref="text" />
+        <input type="submit" value="Post" />
+      </form>
+    );
+  }
 });

@@ -23,7 +23,7 @@ namespace React.Sample.Mvc4
 			));
 
 			// Force minification/combination even in debug mode
-			BundleTable.EnableOptimizations = true;
+			//BundleTable.EnableOptimizations = true;
 		}
 	}
 }
