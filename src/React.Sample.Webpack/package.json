@@ -9,8 +9,9 @@
   "author": "",
   "license": "BSD",
   "devDependencies": {
-    "expose-loader": "^0.6.0",
-    "jsx-loader": "^0.13.1",
+    "extract-text-webpack-plugin": "^0.8.1",
+    "expose-loader": "^0.7.1",
+    "jsx-loader": "^0.13.2",
     "webpack": "^1.5.1"
   }
 }

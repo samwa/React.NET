@@ -1,0 +1,22 @@
+﻿@model React.Sample.Mvc4.Models.CommentModel
+
+Thsi is just to test that asp mvc can do a form post
+@using (Html.BeginForm("AddComment", "Home")) {
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+
+    <fieldset>
+        <legend>edit comments</legend>
+
+        <div class="editor-label">
+            @Html.LabelFor(model => model)
+        </div>
+        <div class="editor-field">
+            @Html.EditorFor(model => model)
+        </div>
+
+        <p>
+            <input type="submit" value="Create" />
+        </p>
+    </fieldset>
+}

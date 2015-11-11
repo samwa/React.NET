@@ -9,6 +9,7 @@
 
 var Comment = require('./Comment');
 var React = require('react');
+var Styles = require('./../Sample.css');
 
 var CommentsBox = React.createClass({
 	propTypes: {
@@ -49,9 +50,9 @@ var CommentsBox = React.createClass({
 		);
 
 		return (
-			<div className="comments">
+			<div className={Styles.comments}>
 				<h1>Comments</h1>
-				<ol className="commentList">
+				<ol className={Styles.commentList}>
 					{commentNodes}
 				</ol>
 				{this.renderMoreLink()}
