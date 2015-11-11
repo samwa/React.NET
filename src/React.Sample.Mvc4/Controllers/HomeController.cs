@@ -75,8 +75,8 @@ namespace React.Sample.Mvc4.Controllers
 				{"jordwalke", new AuthorModel { Name = "Jordan Walke", GithubUsername = "jordwalke" }},
 				{"zpao", new AuthorModel { Name = "Paul O'Shannessy", GithubUsername = "zpao" }},
 			};
-            if (Comments != null && Comments.Count > 0) return;
 
+            if (Comments != null && Comments.Count > 0) return;
 			Comments = new List<CommentModel>
 			{
 				new CommentModel { Author = Authors["daniel"], Text = "First!!!!111!" },

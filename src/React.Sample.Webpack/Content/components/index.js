@@ -10,5 +10,6 @@
 module.exports = {
   Avatar: require('./Avatar'),
   Comment: require('./Comment'),
+  CommentForm: require('./CommentForm'),
   CommentsBox: require('./CommentsBox')
 };

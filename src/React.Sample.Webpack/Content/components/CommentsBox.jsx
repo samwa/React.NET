@@ -8,17 +8,19 @@
  */
 
 var Comment = require('./Comment');
+var CommentForm = require('./CommentForm');
 var React = require('react');
 var Styles = require('./../Sample.css');
 
 var CommentsBox = React.createClass({
 	propTypes: {
-		initialComments: React.PropTypes.array.isRequired
+		initialComments: React.PropTypes.array.isRequired,
+		page: React.PropTypes.number
 	},
 	getInitialState() {
 		return {
 			comments: this.props.initialComments,
-			page: 1,
+			page: this.props.page,
 			hasMore: true,
 			loadingMore: false
 		};
@@ -30,19 +32,39 @@ var CommentsBox = React.createClass({
 			loadingMore: true
 		});
 
-		var url = evt.target.href;
+		var url = evt.target.href;			
+		
+		this.loadCommentsFromServer(nextPage);
+		
+		return false;
+	},
+	  loadCommentsFromServer(page) {
+		
 		var xhr = new XMLHttpRequest();
-		xhr.open('GET', url, true);
-		xhr.onload = () => {
+		xhr.open('GET', this.props.url + '/page-'+page, true);
+		xhr.setRequestHeader('Content-Type', 'application/json');
+		xhr.onload = function() {
 			var data = JSON.parse(xhr.responseText);
 			this.setState({
-				comments: this.state.comments.concat(data.comments),
+				comments: data.comments,
 				hasMore: data.hasMore,
 				loadingMore: false
 			});
-		};
+		}.bind(this);
 		xhr.send();
-		return false;
+	  },
+	handleCommentSubmit: function(comment) {
+      var data = new FormData();
+      data.append('Author.Name', comment.Author.Name);
+      data.append('Author.GithubUsername', comment.Author.GithubUsername);
+      data.append('Text', comment.Text);
+
+      var xhr = new XMLHttpRequest();
+      xhr.open('post', this.props.submitUrl, true);
+	  xhr.onload = function() {
+		this.loadCommentsFromServer(this.state.page);
+	  }.bind(this);      
+      xhr.send(data);
 	},
 	render() {
 		var commentNodes = this.state.comments.map(comment =>
@@ -50,13 +72,14 @@ var CommentsBox = React.createClass({
 		);
 
 		return (
-			<div className={Styles.comments}>
+			<div className="comments">
 				<h1>Comments</h1>
-				<ol className={Styles.commentList}>
+				<ol className="commentList">
 					{commentNodes}
 				</ol>
 				{this.renderMoreLink()}
-			</div>
+				<CommentForm action="/comments/new" onCommentSubmit={this.handleCommentSubmit} />
+			</div>			
 		);
 	},
 	renderMoreLink() {
@@ -64,7 +87,7 @@ var CommentsBox = React.createClass({
 			return <em>Loading...</em>;
 		} else if (this.state.hasMore) {
 			return (
-				<a href={'comments/page-' + (this.state.page + 1)} onClick={this.loadMoreClicked}>
+				<a href={'/comments/page-' + (this.state.page + 1)} onClick={this.loadMoreClicked}>
 					Load More
 				</a>
 			);

@@ -159,6 +159,7 @@
     <Content Include="Content\components\Comment.jsx" />
     <None Include="Content\components\Avatar.jsx" />
     <Content Include="package.json" />
+    <Content Include="Content\components\CommentForm.jsx" />
     <None Include="webpack.config.js" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
