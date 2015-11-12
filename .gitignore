@@ -187,4 +187,3 @@ UpgradeLog*.htm
 
 # Microsoft Fakes
 FakesAssemblies/
-/src/React.Sample.Webpack/Controllers/HomeController.cs
