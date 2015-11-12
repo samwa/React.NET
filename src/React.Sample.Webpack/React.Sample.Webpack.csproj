@@ -112,15 +112,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\React.Sample.Mvc4\App_Start\FilterConfig.cs">
-      <Link>App_Start\FilterConfig.cs</Link>
-    </Compile>
-    <Compile Include="..\React.Sample.Mvc4\App_Start\RouteConfig.cs">
-      <Link>App_Start\RouteConfig.cs</Link>
-    </Compile>
-    <Compile Include="..\React.Sample.Mvc4\Controllers\HomeController.cs">
-      <Link>Controllers\HomeController.cs</Link>
-    </Compile>
+    <Compile Include="App_Start\FilterConfig.cs" />
+    <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="..\SharedAssemblyInfo.cs">
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
@@ -128,9 +122,13 @@
       <Link>Properties\SharedAssemblyVersionInfo.cs</Link>
     </Compile>
     <Compile Include="App_Start\ReactConfig.cs" />
+    <Compile Include="DAL\AuthorRepository.cs" />
+    <Compile Include="DAL\CommentRepository.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\AuthorModel.cs" />
+    <Compile Include="Models\CommentModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
